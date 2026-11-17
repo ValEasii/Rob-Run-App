@@ -32,12 +32,14 @@ svg{width:100%;height:auto;display:block}.si{display:inline-block;width:22px;hei
 .sc details{border:0;border-radius:0;margin:0;background:none;border-top:1px solid var(--ln)}.sc summary{color:var(--au)}
 ol.st{list-style:none;counter-reset:s;padding:0;margin:0 0 10px}ol.st li{counter-increment:s;display:flex;gap:12px;margin:9px 0}ol.st li:before{content:counter(s);flex:0 0 24px;height:24px;border-radius:50%;background:#2a2626;border:1px solid var(--au);color:var(--au);font-size:12px;display:grid;place-items:center}
 .nt{font-size:12px;color:var(--mu);border-left:3px solid var(--ln);padding:2px 10px;margin:0}
+.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}.pc{text-align:center}.big{width:100%;min-height:50px;font-size:16px}
+.ck{display:flex;align-items:center;gap:12px;width:100%;min-height:50px;margin:8px 0;padding:10px 14px;border:1px solid var(--ln);background:#161313;color:var(--tx);border-radius:6px;cursor:pointer;font:inherit}.ck:before{content:"";width:18px;height:18px;border-radius:50%;border:2px solid var(--mu);flex-shrink:0}.ck b{color:var(--au)}.ck.on{border-color:var(--au);background:#2a2216}.ck.on:before{background:var(--au);border-color:var(--au);box-shadow:inset 0 0 0 3px #2a2216}.ck:focus-visible{outline:2px solid var(--au)}
 @media(max-width:700px){body{flex-direction:column}nav{width:100%;height:auto;position:static}.ft{display:none}#nv{display:flex;flex-wrap:wrap}.lg{width:170px;margin-bottom:10px}nav button{width:auto}header,main{padding-left:14px;padding-right:14px}}
 </style></head><body>
 <nav><svg class="lg" viewBox="0 0 180 56" role="img" aria-label="ROB RUN Money Manager"><polygon points="28,3 51,16 51,40 28,53 5,40 5,16" fill="#1a1414" stroke="#d4a84b" stroke-width="2"/><polygon points="28,9 46,19 46,37 28,47 10,37 10,19" fill="none" stroke="#c8372d" stroke-width="1" opacity=".7"/><polyline points="15,36 23,28 30,33 40,21" fill="none" stroke="#d4a84b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><polygon points="35,19 43,17 41,25" fill="#c8372d"/><text x="62" y="29" font-family="Georgia,serif" font-weight="700" font-size="23" letter-spacing="1.5" fill="#e9e4dc">ROB RUN</text><rect x="62" y="34" width="112" height="1.5" fill="#c8372d"/><text x="62" y="48" font-family="Segoe UI,sans-serif" font-size="10" letter-spacing="3.2" fill="#9a938a">MONEY MANAGER</text></svg><div id="nv"></div><div class="ft">Dati salvati in locale</div></nav>
 <div class="mw"><header id="hud"></header><main id="m"></main></div>
 <script>
-const KEY='rrmm1',T=[['dash','Dashboard'],['str','Strategie'],['run','Le mie run'],['an','Analisi'],['obj','Obiettivi']];
+const KEY='rrmm1',T=[['dash','Dashboard'],['str','Strategie'],['prod','Produzione'],['run','Le mie run'],['an','Analisi'],['obj','Obiettivi']];
 const MET=['Rapine piccole','Rapine grandi','Cargo','Polizia','Grow room','Laboratorio','Tasse e clan','Altro'];
 const F=[['date','Data','date'],['start','Inizio','time'],['end','Fine','time'],['method','Metodo','sel'],['route','Percorso','text'],['mode','Modalità','mode'],['cash0','Contanti iniziali','n'],['found','Contanti trovati','n'],['sales','Incasso da vendite','n'],['other','Altre entrate','n'],['eq','Spese equipaggiamento','n'],['veh','Spese veicoli','n'],['ammo','Munizioni','n'],['rep','Riparazioni','n'],['oth','Altre spese','n'],['lost','Soldi persi','n'],['unsold','Valore stimato non venduto','n'],['notes','Note','text']];
 const S=[
@@ -67,12 +69,12 @@ function bars(v,lb,col){if(!v.length)return'<div class="em">Nessun dato: registr
 return`<svg viewBox="0 0 ${w} ${h}">`+`<line x1="0" x2="${w}" y1="${y0}" y2="${y0}" stroke="#555"/>`+v.map((x,i)=>{const bh=Math.abs(x)/sp*h;return`<rect x="${i*bw+2}" y="${x>=0?y0-bh:y0}" width="${Math.max(bw-4,1)}" height="${Math.max(bh,1)}" fill="${col||(x>=0?'#d4a84b':'#c8372d')}"><title>${esc(lb[i])}: ${fm(x)}</title></rect>`}).join('')+'</svg>'}
 function line(v,lb){if(!v.length)return'<div class="em">Nessun dato.</div>';const w=640,h=170,mx=Math.max(0,...v),mn=Math.min(0,...v),sp=(mx-mn)||1,st=v.length>1?w/(v.length-1):0,y=x=>h-(x-mn)/sp*h;
 return`<svg viewBox="0 0 ${w} ${h+4}"><line x1="0" x2="${w}" y1="${y(0)}" y2="${y(0)}" stroke="#555"/><polyline fill="none" stroke="#d4a84b" stroke-width="2" points="${v.map((x,i)=>i*st+','+y(x)).join(' ')}"/>`+v.map((x,i)=>`<circle cx="${i*st}" cy="${y(x)}" r="4" fill="#c8372d"><title>${esc(lb[i])}: ${fm(x)}</title></circle>`).join('')+'</svg>'}
-const IC={dash:'M3 13h8V3H3zM13 21h8V11h-8zM13 3v6h8V3zM3 21h8v-6H3z',str:'M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4zM8 9h8',run:'M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z',an:'M4 20V10M10 20V4M16 20v-7M22 20H2',obj:'M12 3l2.6 5.6 6 .7-4.4 4.1 1.2 6L12 16.5 6.6 19.4l1.2-6L3.4 9.3l6-.7z'};
+const IC={dash:'M3 13h8V3H3zM13 21h8V11h-8zM13 3v6h8V3zM3 21h8v-6H3z',str:'M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4zM8 9h8',prod:'M6 3h12M6 21h12M7 3c0 5 3 6 5 9-2 3-5 4-5 9M17 3c0 5-3 6-5 9 2 3 5 4 5 9',run:'M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z',an:'M4 20V10M10 20V4M16 20v-7M22 20H2',obj:'M12 3l2.6 5.6 6 .7-4.4 4.1 1.2 6L12 16.5 6.6 19.4l1.2-6L3.4 9.3l6-.7z'};
 function nav(){$('nv').innerHTML=T.map(t=>`<button class="${t[0]===tab?'on':''}" onclick="go('${t[0]}')"><svg viewBox="0 0 24 24"><path d="${IC[t[0]]}"/></svg>${t[1]}</button>`).join('')}
 function hud(){const a=D.runs.map(r=>({r,c:calc(r)})),s=stats(a);$('hud').innerHTML=`<b>${T.find(t=>t[0]===tab)[1]}</b><div class="ch"><div class="c">Saldo netto<i class="${cl(s.t)}">${fm(s.t)}</i></div><div class="c">Run<i>${s.k}</i></div><div class="c">Media per ora<i>${fm(s.pph)}</i></div></div><span class="sv" id="sy">${SY}</span>`}
 function go(t){tab=t;edit=null;draw()}
 function K(a,b){return`<div class="k"><small>${a}</small><b>${b}</b></div>`}
-function draw(){nav();hud();const f={dash,str,run,an,obj}[tab];$('m').innerHTML=f()}
+function draw(){nav();hud();const f={dash,str,prod,run,an,obj}[tab];$('m').innerHTML=f()}
 function dash(){const a=rs(),s=stats(a),inc=a.reduce((x,y)=>x+y.c.inc,0),ex=a.reduce((x,y)=>x+y.c.exp,0);
 const bm={};a.forEach(x=>bm[x.r.method||'Altro']=(bm[x.r.method||'Altro']||0)+x.c.net);const e=Object.entries(bm).sort((p,q)=>q[1]-p[1]);
 return`<h2>Dashboard</h2><div class="g">${K('Guadagni totali',fm(inc))}${K('Spese totali',fm(ex))}${K('Profitto netto',fm(s.t))}${K('Run completate',s.k)}${K('Profitto medio per run',fm(s.avg))}${K('Profitto medio all’ora',fm(s.pph))}</div>`+(s.k?`<div class="p"><h3>Profitto cumulativo</h3>${line(cum(a),a.map(lab))}</div><div class="p"><h3>Miglior metodo</h3>${esc(e[0][0])}: ${fm(e[0][1])}</div>`:'<div class="em">Ancora nessuna run. Apri “Le mie run” e registra la prima: qui compariranno i tuoi dati reali.</div>')}
@@ -120,7 +122,7 @@ async function tok(){const s=SB.session;if(!s)throw new Error('no');if(s.exp-Dat
 function mergeD(a,b){a=norm(a);b=norm(b);const del=Object.assign({},a.del);for(const k in b.del)del[k]=Math.max(del[k]||0,b.del[k]);
 const un=(p,l,r)=>{const m={};l.concat(r).forEach(o=>{const c=m[o.id];if(!c||(o.u||0)>(c.u||0))m[o.id]=o});return Object.values(m).filter(o=>!(del[p+o.id]!==undefined&&del[p+o.id]>=(o.u||0)))};
 const sn={};new Set(Object.keys(a.sn).concat(Object.keys(b.sn))).forEach(k=>{const x=a.sn[k],y=b.sn[k];sn[k]=!y||(x&&(x.u||0)>=(y.u||0))?x:y});
-return{runs:un('r',a.runs,b.runs),goals:un('g',a.goals,b.goals),sn,del}}
+const x=a.timer,y=b.timer;return{runs:un('r',a.runs,b.runs),goals:un('g',a.goals,b.goals),sn,del,timer:(!y||(x&&(x.u||0)>=(y.u||0)))?(x||null):y}}
 async function syncNow(){if(!SB.session||busy)return;if(!navigator.onLine){setSY('Offline: sincronizzo appena possibile');return}
 busy=true;setSY('Sincronizzazione in corso');
 try{for(let i=0;i<4;i++){const uid=SB.session.id,g=await api('/rest/v1/app_data?user_id=eq.'+uid+'&select=data,rev',{},true);if(!g.ok||!Array.isArray(g.j))throw new Error('get');
@@ -142,6 +144,33 @@ function logout(){SB.session=null;sbSave();setSY('Salvato in locale');draw()}
 function delG(i){const g=D.goals[i];D.del['g'+g.id]=Date.now();D.goals.splice(i,1);save();draw()}
 function syncUI(){const c=sbc();return`<h3>Profilo e sincronizzazione</h3><div class="p">`+(SB.session?`<p style="margin-top:0">Collegato come <b>${esc(SB.session.email)}</b><br><span class="mu">Ultima sincronizzazione: ${SB.last?new Date(SB.last).toLocaleString('it-IT'):'mai'}</span></p><div class="row"><button class="b" onclick="syncNow()">Sincronizza ora</button><button class="b s" onclick="logout()">Esci</button></div>`:`<p class="mu" style="margin-top:0">L’app funziona anche senza profilo. Collegane uno per sincronizzare run, obiettivi e note tra i tuoi dispositivi.</p><div class="f">${SB_URL?'':`<div><label>Indirizzo del progetto</label><input id="s_url" value="${esc(c.u)}" placeholder="https://xxxx.supabase.co"></div><div><label>Chiave pubblica</label><input id="s_key" value="${esc(c.k)}"></div>`}<div><label>Email</label><input id="s_em" type="email" autocomplete="username"></div><div><label>Password</label><input id="s_pw" type="password" autocomplete="current-password"></div></div><div class="row"><button class="b" onclick="auth('in')">Accedi</button><button class="b s" onclick="auth('up')">Crea profilo</button></div>`)+`<p id="smsg" class="mu" role="status"></p></div>`}
 addEventListener('online',()=>{if(SB.session)syncNow()});
+/* ---- Produzione: timer di raccolta (un solo timer, sincronizzato col profilo) ---- */
+const PK='rrmm_prod',TC=565.49,PU=[['uv','Lampada UV',24],['fan','Ventilatore',12],['pump','Pompa dell’acqua',14]];
+let P=(()=>{try{const x=JSON.parse(localStorage.getItem(PK));if(x&&x.cfg)return x}catch(e){}return{cfg:{weed:{}}}})();
+P.cfg=P.cfg||{};P.cfg.weed=P.cfg.weed||{};
+function saveP(){try{localStorage.setItem(PK,JSON.stringify(P))}catch(e){}}
+const pr=()=>{const u=P.cfg.weed.up||{};return Math.min(95,PU.filter(x=>u[x[0]]).reduce((a,x)=>a+x[2],0))};
+const BASE=60,pm=()=>BASE*60000*(1-pr()/100);
+const hms=ms=>{ms=Math.max(0,Math.ceil(ms/1000));const h=Math.floor(ms/3600),m=Math.floor(ms%3600/60),s=ms%60;return(h?h+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')};
+const pvt=()=>{const d=pm();if(!d)return'Inserisci la durata base in minuti';const r=pr();return'Tempo effettivo: '+hms(d)+(r?' (riduzione '+r+'%)':'')};
+function pup(id,v){P.cfg.weed.up=P.cfg.weed.up||{};P.cfg.weed.up[id]=v;saveP();draw()}
+function tgo(){const d=pm();if(!d){alert('Inserisci prima la durata base in minuti.');return}const n=Date.now();D.timer={id:n,u:n,on:true,end:n+d,dur:d,r:pr()};save();draw()}
+function tstop(){if(D.timer){D.timer.on=false;D.timer.u=Date.now();save();draw()}}
+function beep(){try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator();o.frequency.value=880;o.connect(a.destination);o.start();setTimeout(()=>o.stop(),350)}catch(e){}}
+function notify(msg){try{navigator.vibrate&&navigator.vibrate([300,150,300])}catch(e){}beep();
+try{if('Notification' in window&&Notification.permission==='granted'){if(navigator.serviceWorker&&navigator.serviceWorker.controller)navigator.serviceWorker.ready.then(r=>r.showNotification('ROB RUN',{body:msg,icon:'icon-192.png'}));else new Notification('ROB RUN',{body:msg})}}catch(e){}}
+function askN(){try{Notification.requestPermission().then(()=>draw())}catch(e){alert('Avvisi non supportati da questo browser.')}}
+function ptick(){const t=D.timer,n=Date.now();if(!t||!t.on)return;
+if(n>=t.end){if(P.nid!==t.id){P.nid=t.id;saveP();notify('Erba pronta per la raccolta!');if(tab==='prod')draw()}return}
+if(tab==='prod'){const e=$('pt'),r=$('pr');if(e)e.textContent=hms(t.end-n);if(r)r.style.strokeDashoffset=TC*(1-Math.min(1,Math.max(0,1-(t.end-n)/t.dur)))}}
+setInterval(ptick,1000);
+addEventListener('visibilitychange',()=>{try{if(!document.hidden)ptick()}catch(e){}});
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+function prod(){const t=D.timer,n=Date.now(),on=!!(t&&t.on),rd=on&&n>=t.end,c=P.cfg.weed,u=c.up||{},np='Notification' in window?Notification.permission:'no',fr=on?Math.min(1,Math.max(0,1-(t.end-n)/t.dur)):0,hr=x=>new Date(x).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+return`<h2>Produzione</h2><div class="pg"><div class="p pc"><svg viewBox="0 0 220 220" style="max-width:240px;margin:0 auto" role="img" aria-label="Avanzamento della crescita"><circle cx="110" cy="110" r="90" fill="none" stroke="#2a2626" stroke-width="12"/><circle id="pr" cx="110" cy="110" r="90" fill="none" stroke="${rd?'#6fae7a':'#d4a84b'}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${TC}" style="stroke-dashoffset:${TC*(1-fr)};transform:rotate(-90deg);transform-origin:110px 110px"/><text id="pt" x="110" y="116" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="${rd?32:38}" fill="${rd?'#6fae7a':'#e9e4dc'}">${!on?'--:--':rd?'Pronta':hms(t.end-n)}</text><text x="110" y="142" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="12" fill="#9a938a">${!on?'Nessun timer attivo':rd?'Pronta per la raccolta':'Erba in crescita'}</text></svg><p class="mu" style="margin:6px 0 14px">${on?(rd?'Pronta dalle ':'Pronta alle ')+hr(t.end):'Imposta i potenziamenti e avvia il timer'}</p>${rd?`<button class="b big" onclick="tgo()">Raccolta fatta, riavvia</button><button class="b s big" style="margin-top:8px" onclick="tstop()">Ferma</button>`:on?`<button class="b s big" onclick="tstop()">Ferma timer</button>`:`<button class="b big" onclick="tgo()">Avvia timer</button>`}</div>
+<div class="p"><h3 style="margin-top:0">Grow Table: erba</h3><div class="mu" style="font-size:12px">Durata base</div><div style="font:700 22px Georgia,serif">1 ora</div><h3>Potenziamenti montati</h3>${PU.map(x=>`<button class="ck ${u[x[0]]?'on':''}" aria-pressed="${!!u[x[0]]}" onclick="pup('${x[0]}',${!u[x[0]]})"><span style="flex:1;text-align:left">${x[1]}</span><b>−${x[2]}%</b></button>`).join('')}<p id="pv" class="mu" style="margin:12px 0 0">${pvt()}</p></div></div>
+<div class="row" style="margin:14px 0 6px"><button class="b s" onclick="askN()" ${np==='granted'||np==='no'?'disabled':''}>${np==='granted'?'Avvisi attivi':np==='denied'?'Avvisi bloccati dal browser':'Attiva avvisi'}</button></div><p class="nt">Il timer resta salvato anche se chiudi l’app e, con il profilo collegato, compare sugli altri dispositivi. Suono e avviso partono solo con l’app aperta. I potenziamenti scelti non cambiano un timer già avviato.</p>`}
+
 draw();
 if(SB.session)syncNow();
 try{if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js')}catch(e){}
